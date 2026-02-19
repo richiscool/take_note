@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:take_note/controllers/view_controller.dart';
@@ -42,4 +43,12 @@ class _MainAppState extends State<MainApp> {
     super.initState();
     _generateThemes();
   }
+
+  @override
+  Widget build(BuildContext context) {
+    ScreenUtil.init(context,designSize: const Size(390, 844));
+    return const MaterialApp(
+      home: Scaffold(body: Center(child: Text("Take Note App"),),),
+    );
+}
 }
