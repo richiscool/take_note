@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:take_note/controllers/view_controller.dart';
+import 'package:take_note/router.dart';
 
 void main() {
   runApp(const MainApp());
@@ -47,8 +47,21 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context,designSize: const Size(390, 844));
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text("Take Note App"),),),
-    );
-}
+    return Obx(() {
+      final brightness = _viewController.state.value;
+      final themeMode = switch (brightness) {
+        Brightness.light => ThemeMode.light,
+        Brightness.dark => ThemeMode.dark,
+      };
+      return GetMaterialApp(
+        title: 'Take Note',
+        debugShowCheckedModeBanner: false,
+        themeMode: themeMode,
+        theme: _themes[0],
+        darkTheme: _themes[1],
+        initialRoute: '/onboarding',
+        getPages: appScreens,
+      );
+    });
+  }
 }
