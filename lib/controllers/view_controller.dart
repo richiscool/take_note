@@ -7,3 +7,4 @@ class ViewController extends GetxController {
     state.value = theme;
   }
 }
+// create read update delete (CRUD))
