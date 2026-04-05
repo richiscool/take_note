@@ -1,27 +1,26 @@
 name: take_note
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: ^3.10.4
+  sdk: ^3.9.2
 
 dependencies:
   flutter:
     sdk: flutter
-  google_fonts: ^8.0.2
-  json_annotation: ^4.9.0 
-  flutter_screenutil: ^5.9.0 
-  easy_date_timeline: ^2.0.9 
-  intl: ^0.20.2 
-  entry: ^1.0.0 
-  confetti: 0.8.0 
+  google_fonts: ^8.0.1
+  json_annotation: ^4.9.0
+  flutter_screenutil: ^5.9.0
+  easy_date_timeline: ^2.0.9
+  intl: ^0.20.2
+  entry: ^1.0.0
+  confetti: 0.8.0
   get: ^4.6.5
-  shared_preferences: ^2.5.3 
+  shared_preferences: ^2.5.3
+  iconsax: ^0.0.8
   crypto: ^3.0.7
   uuid: ^4.5.3
-  iconsax: ^0.0.8
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -14,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final DataController _dataController = Get.find<DataController>();
+  final DataController _dataController = Get.put(DataController());
   var _name = '';
   var _email = '';
   var _password = '';
@@ -51,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 _emailField(),
                 _passwordField(),
+                _submitButton(context),
                 if (!_isLoading) _modeSwitcher(),
                 const Divider(height: 30),
               ],
@@ -167,37 +168,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onCorrectAuth(_) {
-    if (!_isSignIn) {
-      ScaffoldMessenger.of(context).showSnackBar(_welcomeSnackBar);
-    }
-    Get.toNamed('/home');
-  }
-
-  Future<bool> _saveForm() async {
-    if (!_formKey.currentState!.validate()) {
-      return false;
-    }
-    try {
-    setState(() {
-      _isLoading = true;
-    });
-    if (_isSignIn) {
-      return await _dataController.getUser(_email, _password);
-    } else {
-      return await _dataController.createUser(_name, _email, _password);
-    }
-  } catch(_) {
-    _failedAuth = true;
-    await Future.delayed(const Duration(milliseconds: 350));
-    setState(() {
-      _isLoading = false;
-    });
-    _formKey.currentState!.validate();
-    return false;
-  }
-  }
-
   Widget _submitButton(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 50.h),
@@ -224,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: const CircularProgressIndicator(strokeWidth: 2),
               )
             : const Icon(Icons.login),
-            onPressed: _isLoading
+        onPressed: _isLoading
             ? null
             : () async {
                 _failedAuth = false;
@@ -238,5 +208,35 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-}
 
+  void onCorrectAuth(_) {
+    if (!_isSignIn) {
+      ScaffoldMessenger.of(context).showSnackBar(_welcomeSnackBar);
+    }
+    Get.toNamed('/home');
+  }
+
+  Future<bool> _saveForm() async {
+    if (!_formKey.currentState!.validate()) {
+      return false;
+    }
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      if (_isSignIn) {
+        return await _dataController.getUser(_email, _password);
+      } else {
+        return await _dataController.createUser(_name, _email, _password);
+      }
+    } catch (_) {
+      _failedAuth = true;
+      await Future.delayed(const Duration(milliseconds: 250));
+      setState(() {
+        _isLoading = false;
+      });
+      _formKey.currentState!.validate();
+      return false;
+    }
+  }
+}

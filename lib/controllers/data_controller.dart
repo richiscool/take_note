@@ -11,72 +11,76 @@ class DataController extends GetxController {
   List<String> savedNotes = <String>[].obs;
 
   var loaded = false.obs;
-  User? app_user;
+  var appUser = User(name: "", email: "", creationDate: DateTime.now()).obs;
 
-  Future<void> serializeNotes() async {
+  Future<bool> serializeNote() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (savedNotes.isEmpty) {
+    if (savedNotes.isNotEmpty) {
       savedNotes.clear();
-  }
+    }
 
     for (int i = 0; i < notes.length; i++) {
       String note = json.encode(notes[i]);
       savedNotes.add(note);
-      await prefs.setStringList('com.richard.Take_Note', savedNotes);
     }
+    return await prefs.setStringList("com.chidi.Take_Note", savedNotes);
   }
 
-  void deserializeNotes() async {
+  void deserializeNote() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var fromMem = prefs.getStringList('com.richard.Take_Note');
+    var fromMem = prefs.getStringList("com.chidi.Take_Note");
     if (fromMem != null) {
-      savedNotes = fromMem.obs;
+      savedNotes = fromMem;
       notes.clear();
       for (int i = 0; i < savedNotes.length; i++) {
         Note note = Note.fromJson(json.decode(savedNotes[i]));
         notes.add(note);
       }
     }
-    loaded.value = true;
+    loaded(true);
   }
 
   Future<bool> createUser(String name, String email, String password) async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      var uuid = Uuid();
-      var userId = uuid.v1();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var uuid = Uuid();
+    var id = uuid.v1();
 
-      var bytes = utf8.encode(password);
-      Digest digest = sha256.convert(bytes);
-      var encryptedPassword = digest.toString();
+    var bytes = utf8.encode(password);
+    Digest digest = sha256.convert(bytes);
+    var encryptedPass = digest.toString();
 
-      User newUser = User(
-        id: userId,
-        name: name,
-        creationDate: DateTime.now(),
-        email: email,
-        password: encryptedPassword,
-      );
+    User newUser = User(
+      name: name,
+      email: email,
+      creationDate: DateTime.now(),
+      id: id,
+      password: encryptedPass,
+    );
 
-      String userInfo = json.encode(newUser);
-      await prefs.setString('com.richard.Take_Note_User', userInfo);
-      return true;
+    String userInfo = json.encode(newUser);
+    await prefs.setString("com.chidi.Take_Note_User", userInfo);
+    appUser(newUser);
+    return true;
   }
 
   Future<bool> getUser(String email, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var savedUser = prefs.getString('com.richard.Take_Note_User');
+
+    var savedUser = prefs.getString("com.chidi.Take_Note_User");
+
     if (savedUser != null) {
       var user = User.fromJson(json.decode(savedUser));
-      if (email == user.email) {
 
+      if (email == user.email) {
         var bytes = utf8.encode(password);
         Digest digest = sha256.convert(bytes);
-        var encryptedPassword = digest.toString();
+        var encryptedPass = digest.toString();
 
-        if (encryptedPassword == user.password) {
+        if (encryptedPass == user.password) {
+          appUser(user);
           return true;
         } else {
-          return false;
+          false;
         }
       } else {
         return false;

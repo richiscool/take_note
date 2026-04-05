@@ -26,7 +26,7 @@ class _MainAppState extends State<MainApp> {
       themes.add(
         ThemeData(
           brightness: brightness,
-          colorSchemeSeed: const Color.fromARGB(255, 255, 0, 170),
+          colorSchemeSeed: const Color.fromARGB(255, 185, 79, 255),
           textTheme: GoogleFonts.geologicaTextTheme(
             const TextTheme(
               headlineLarge: TextStyle(fontWeight: FontWeight.w600),
@@ -37,7 +37,7 @@ class _MainAppState extends State<MainApp> {
     }
     _themes = themes;
   }
-  
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +46,7 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context,designSize: const Size(390, 844));
+    ScreenUtil.init(context, designSize: const Size(390, 844));
     return Obx(() {
       final brightness = _viewController.state.value;
       final themeMode = switch (brightness) {
@@ -59,7 +59,7 @@ class _MainAppState extends State<MainApp> {
         themeMode: themeMode,
         theme: _themes[0],
         darkTheme: _themes[1],
-        initialRoute: '/onboarding',
+        initialRoute: '/auth',
         getPages: appScreens,
       );
     });

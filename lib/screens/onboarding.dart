@@ -22,7 +22,7 @@ class OnboardingScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.symmetric(vertical: 30.h),
               height: 200.h,
-              child: Image.asset('assets/images/onboarding.png'),
+              child: Image.asset('assets/onboarding.png'),
             ),
             
             ElevatedButton(

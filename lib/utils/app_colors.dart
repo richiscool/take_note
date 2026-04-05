@@ -7,9 +7,11 @@ class AppColors {
   static const Color darkBackground = Color(0xFF1A1A1A);
   static const Color cardDarkBackground = Color(0xFF2A2A2A);
 
+  static const Color primary = Color.fromARGB(255, 210, 143, 255);
+
   static const Color primaryText = Color(0xFFFFFFFF);
-  static const Color secondaryText = Color(0xFF9E9E9E);
-  static const Color tertiaryText = Color(0xFF8C8C8C);
+  static const Color secondaryText = Color(0xFF777777);
+  static const Color tertiaryText = Color(0xFF222222);
   static const Color greenText = Color(0xFF4CAF50);
 
   static const Color visaCardYellow = Color(0xFFE4F34D);
