@@ -40,6 +40,29 @@ class DataController extends GetxController {
     loaded(true);
   }
 
+  Future<bool> putTaskItemsToServer(Note note) async {
+    var uuid = Uuid();
+    var id = uuid.v1();
+    note.id = id.toString();
+    notes.add(note);
+    return await serializeNote();
+  }
+
+  Future<bool> updateTaskItemToServer(Note note) async {
+    for (int i = 0; i < notes.length; i++) {
+      if (notes[i].id == note.id) {
+        notes[i] = note;
+        break;
+      }
+    }
+    return await serializeNote();
+  }
+
+  Future<bool> deleteTaskItemToServer(Note note) async {
+    notes.removeWhere((n) => n.id == note.id);
+    return await serializeNote();
+  }
+
   Future<bool> createUser(String name, String email, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var uuid = Uuid();

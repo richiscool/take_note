@@ -9,7 +9,10 @@ import 'package:take_note/models/note.dart';
 import 'package:take_note/utils/app_colors.dart';
 
 class NoteScreen extends StatefulWidget {
-  const NoteScreen({super.key});
+  final bool isEdit;
+  final Note? toEdit;
+
+  const NoteScreen({super.key, required this.isEdit, this.toEdit});
 
   @override
   State<NoteScreen> createState() => _NoteScreenState();
@@ -28,11 +31,23 @@ class _NoteScreenState extends State<NoteScreen> {
   var _isSaving = false;
 
   @override
+  void initState() {
+    if (widget.isEdit) {
+      noteController.text = widget.toEdit!.content;
+      titleController.text = widget.toEdit!.title;
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {
+          onPressed: () async {
+            if (widget.isEdit) {
+              await _saveNote();
+            }
             Get.back();
           },
           icon: Icon(Iconsax.arrow_left),
@@ -43,12 +58,28 @@ class _NoteScreenState extends State<NoteScreen> {
             icon: Icon(Iconsax.export, size: 30.sp),
           ),
           IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Iconsax.tick_circle,
-              color: AppColors.binanceGold,
-              size: 30.sp,
-            ),
+            onPressed: _isSaving
+                ? null
+                : () async {
+                    _saveFailed = false;
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    if (await _saveNote()) {
+                      await Future.delayed(
+                        const Duration(milliseconds: 250),
+                      ).then(onSaveSuccess);
+                    }
+                  },
+            icon: _isSaving
+                ? SizedBox(
+                    width: 14.w,
+                    height: 14.w,
+                    child: const CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(
+                    Iconsax.tick_circle,
+                    color: AppColors.binanceGold,
+                    size: 30.sp,
+                  ),
           ),
         ],
       ),
@@ -72,7 +103,8 @@ class _NoteScreenState extends State<NoteScreen> {
               ),
               SizedBox(height: 15.h),
               TextFormField(
-                maxLines: 8,
+                maxLines: null,
+
                 controller: noteController,
                 keyboardType: TextInputType.multiline,
                 style: TextStyle(fontSize: 20.sp),
@@ -93,7 +125,11 @@ class _NoteScreenState extends State<NoteScreen> {
     );
   }
 
-  Future<bool> _saveNote() async {
+  void onSaveSuccess(_) {
+    Get.back();
+  }
+
+  Future<bool> _save(Note note) async {
     if (!_formKey.currentState!.validate()) {
       return false;
     }
@@ -102,13 +138,11 @@ class _NoteScreenState extends State<NoteScreen> {
         _isSaving = true;
       });
 
-      Note note = Note(
-        title: titleController.text,
-        content: noteController.text,
-        createdAt: DateTime.now(),
-      );
-      _dataController.notes.add(note);
-      return await _dataController.serializeNote();
+      if (widget.isEdit) {
+        return await _dataController.updateTaskItemToServer(note);
+      } else {
+        return await _dataController.putTaskItemsToServer(note);
+      }
     } catch (_) {
       _saveFailed = true;
       await Future.delayed(const Duration(milliseconds: 250));
@@ -117,6 +151,26 @@ class _NoteScreenState extends State<NoteScreen> {
       });
       _formKey.currentState!.validate();
       return false;
+    }
+  }
+
+  Future<bool> _saveNote() async {
+    if (widget.isEdit) {
+      if (titleController.text != widget.toEdit!.title ||
+          noteController.text != widget.toEdit!.content) {
+        var note = widget.toEdit!;
+        note.content = noteController.text;
+        note.title = titleController.text;
+        return await _save(note);
+      }
+      return true;
+    } else {
+      Note note = Note(
+        title: titleController.text,
+        content: noteController.text,
+        createdAt: DateTime.now(),
+      );
+      return await _save(note);
     }
   }
 }

@@ -59,7 +59,7 @@ class _MainAppState extends State<MainApp> {
         themeMode: themeMode,
         theme: _themes[0],
         darkTheme: _themes[1],
-        initialRoute: '/auth',
+        initialRoute: '/onboarding',
         getPages: appScreens,
       );
     });

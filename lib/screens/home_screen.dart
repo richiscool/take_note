@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:take_note/controllers/data_controller.dart';
 import 'package:take_note/controllers/view_controller.dart';
+import 'package:take_note/utils/helper.dart';
 import 'package:take_note/widgets/custom_app_bar.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:take_note/widgets/home_widget.dart';
+import 'package:take_note/widgets/note_display_widget.dart';
+import 'package:take_note/widgets/note_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,13 +25,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    _dataController.deserializeNote();
     pages.add(
       HomeWidget(
         dataController: _dataController,
         viewController: _viewController,
+        onViewAll: selectScreen,
       ),
     );
-    pages.add(Text("Notes"));
+    pages.add(
+      NoteDisplayWidget(
+        dataController: _dataController,
+        viewController: _viewController,
+      ),
+    );
     pages.add(Text("Profile"));
     super.initState();
   }
@@ -73,6 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       );
+    });
+  }
+
+  void selectScreen(int index) {
+    setState(() {
+      currentPageIndex = index;
     });
   }
 }
